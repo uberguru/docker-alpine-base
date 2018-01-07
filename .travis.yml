@@ -6,3 +6,17 @@ env:
   global:
   - secure: btZtlovInGvPiAez8dAQSD24fPAhS2rwqPuRKGTEVHyVT/XHYumq2dAZ50hcXZJfDhiJSHcKlA3v5pUdma1j29NfmSojDPOXSzCVZ3zVmcdAk/HJ5aEcusHgFhmNl9GgTkwAiJPJ5hhAJwRT5uPTyGPBcPha81sSIReb8dunjewvPHLHiSuqD3gKkq/waHisf0VoUpc55qH+HsVJ6Oq/Qh61hGvldOefbpeHcGKY2vbA+dQPAvpknw4njofDylh8hoWv1KjW2MZtTer743q73QecTcTxpB5A3S4txW6nMi4ZG3UABIsUCv5myzJYcAY7STYtnydiceXImNTgHcxnKJXt/XqQkglTYnBUBbEnlgSsLwcXlxyhOpGLPWDVH1XotkgA7k6/grKpag4FM1ukNj/STmPrWSPjRE+IoAR11DvgxhGwLiDUmtSWrpvFxkT6Bgr5c6LBw6tZ/Qh8EGybU3DLy5jOHmK0k3j+ktUSJRUyGPR1D7NAECPddnNlKC1KRvfqPCRxa6ZlaDsX8TfRtZlkMGnIMxmvfJ7/jJKKkj3S17gxMBGIp+kz9AEhlclKJtyR17jXnSQWYTo4KiBMl23S2NhyY98ng76Sb3PS952UoKK7cTbpm33xlJxRN7usd9dy+bojvCHJQfx/Jv2MpHc20h780ncS7MupkImdLHo=
   - secure: U7w+rFgzOC1bB2qBqPMQXBfjovimVsDmMRUKHQzzvyaEjU75Kk31WvAqpZqgeArWLXzQIv3lQK6Etmt4wwLn6WNGjts188Yx9nQqsrQ6sKzSSuSqsJQZvuqE4zBda5kpV0eRoyHVUb4RdOejz1CwISigyu7lOH8ytVChfhy2738TzFKvwFQgC7nceQzBAPWLGD57LtjwHMBwig2u4DlQKwlTbVv6kou9FESP3K8ph3jBmW0B5AmUFPpDI6yppRMTkBfWNdvoa2ujbDlVZQIp68tt0irJFlg+VQ0Cw4mn85USdpnoyyD0X7SQefPtdLnMTYI/i4GmTu3n79PD+/x4sIzXnKfjlIATVk5RydP93T3N3Ur6RqNzd/XZi/3mqzTY4Bu1rnGfqBrSracL6VxE/LrnPY2EnQNbXRzNKURCnA9ipzcMuGUoWv1WMsLxRAVgndDKvLp+Ujm9Uy+rdeTmo73zmfTtPHPBKsjEUrALzThahLCS7RaWKiIQvNJsUmRwJ2V2EqWEUHJ6S07xYE896o7F9t7QHh0tsXpWM9vS8fUpE08gN9NRFx86GUUKEWOruxSqoovP2t5kh4qtW51UhaHjNJoAoysWmuKwQiQuqxwb3PojoI4yV/OccoIw0uzqCxco8oxvvmnHat8KsTZicMIkUrXi0nhsk4OrgkCPgps=
+
+
+jobs:
+  include:
+    - stage: build docker image
+      script:
+        - docker login -u $DOCKER_USER -p $DOCKER_PASS
+        - export REPO=uberguru/alpine
+        - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+        #- export TAG="$TRAVIS_BRANCH"
+        - docker build -f Dockerfile -t "$REPO:$COMMIT" .
+        - docker tag $REPO:$COMMIT $REPO:$TAG
+        - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+        - docker push $REPO
