@@ -6,17 +6,14 @@ env:
   - COMMIT=${TRAVIS_COMMIT::8}
   - secure: TCdJICkWWLb0scNaOF6EG0symD4uKKw18o1ue/hEsgITFLSE+DDKnczPCJqyGINRcgX3mGFKKkyXlz2mUW7dEi0qmITQteNx7MaOXovWmaeptJz/4ebS/1xqrlsHyFn80MGg2/4xAvEYqMd0zNvsWoQDxR5IWBMTIZB5GuRoXMQ3jr3blvEqj3fz5hG4s2JyS2+tkbKiDtPKJ8ZA9xcbsxPEvP/xoOQpHgZTC4PJYM+7qlicoP5eWr43Fm+9RwNW+rOX4fD30sRi9Hmwcv2SuhcNaRSL0yKljQVAddcPWIssbYwKopQrnR2llAxW+R5dadPMyFC4zw6MBwabCwpnmMkZ7KNUexTCaS6WvDfUsCK/kbgt/zKuFb+KAYstRkfj9/oxHvgt5pgCXBLalHJBCyPMs5HcrVllgb72NZ5zJxp72uzcVcAmtiqe659xJYuaKgryVeDBwQkdfhanXaJKwym0ckDK6942ZwEqe9XgmmYGV3JDuAOjgBAOxn57zBQ1Osy7kKl03tHv43tWqOrKgc1cuUptbJ129YgDli+yno6CUoH0V4kSjgBD9WmlGg679x+Hz94/+KQor+S/1GNEhvX9/27TX4x4A+mxa5jcSoPLPaXFdPohgkLjoJ8SQ5eSl+2xhpn6KtI0Zwvb8rlbzPyd3xsz4x9tMACdYGwMlt8=
   - secure: KHQqNWQw/o3ds7rR2ycG/CCuDgY2LSKb2Fa7i3sPPjaQUqQWr4V8IcNRmLEvTqnundI29rcOuxPNQCz8nlYz0HynsLu1tbFd1jXQ5SX/gzGQhXf8zF+GuLVgs9uceTUv5E5TqF165WhoTiIbEAhEa8dpElDxcV9ZziF9oS6hhxY6WhIbxf+LNKyfGYDYqLbUUwJWowmSYS0RtNfrow6IMYI14Gev+LBjqMVExIX6Fbbg5Dle6MW7mmq9I0n5W0tEE0crB5QQEEoM39DZrtgYle6BXwlINPwSuWvR9ClteWONktoF2Vi3+zh9S10Hleponof8uCQ4nx9hKxNhVVz50zIGQUUezw0JWwixqaEfKI5D0G7E6aA7OR9FDEDgeUhzZkd8I+EOVguJN5JUKkpQeqjNI+LIIXhewRYWdztS0cjr0rsetjI4l59vC2WwEPaI5u1NrXrZBvaRdevRYQUmREpVSSp2b11It0/EvNyvKJplyQIv0xXxnrRbY5Q5vzBf0mv3AOioOm+3UcKcPeuGLfXNuTUqicLe0cEuMpZKHpf78R5gGEGz06mYD8kW1M6/ZFb4cY2Pk0F6cYwnxB9x3PhUSm86xZzK5qRzV7Lhp0p8taHl1uHhdBQQ8dv+IuITsdC47GngVrBYYVsSps2VCVMc9kZwz85EpBhngtR8k9E=
-jobs:
-  include:
-  - stage: build docker image
-    script:
-    - secure: TCdJICkWWLb0scNaOF6EG0symD4uKKw18o1ue/hEsgITFLSE+DDKnczPCJqyGINRcgX3mGFKKkyXlz2mUW7dEi0qmITQteNx7MaOXovWmaeptJz/4ebS/1xqrlsHyFn80MGg2/4xAvEYqMd0zNvsWoQDxR5IWBMTIZB5G$
-    - secure: KHQqNWQw/o3ds7rR2ycG/CCuDgY2LSKb2Fa7i3sPPjaQUqQWr4V8IcNRmLEvTqnundI29rcOuxPNQCz8nlYz0HynsLu1tbFd1jXQ5SX/gzGQhXf8zF+GuLVgs9uceTUv5E5TqF165WhoTiIbEAhEa8dpElDxcV9ZziF9o$
-    - docker login -u $DOCKER_USER -p $DOCKER_PASS
-    - export REPO=uberguru/alpine
-    - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo
-      $TRAVIS_BRANCH ; fi`
-    - docker build -f Dockerfile -t "$REPO:$COMMIT" .
-    - docker tag $REPO:$COMMIT $REPO:$TAG
-    - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
-    - docker push $REPO
+
+
+
+after_success:
+   - docker login -u $DOCKER_USER -p $DOCKER_PASS
+   - export REPO=uberguru/alpine
+   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo$TRAVIS_BRANCH ; fi`
+   - docker build -f Dockerfile -t "$REPO:$COMMIT" .
+   - docker tag $REPO:$COMMIT $REPO:$TAG
+   - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+   - docker push $REPO
